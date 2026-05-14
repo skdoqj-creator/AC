@@ -1,0 +1,529 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+.wrap{font-family:var(--font-sans);padding:0.75rem 0 2rem;}
+.tab-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.tab-btn{font-size:12px;padding:5px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .15s;font-weight:500;}
+.tab-btn.active{color:var(--color-text-primary);background:var(--color-background-secondary);border-color:var(--color-border-primary);}
+.era-row{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap;}
+.era-btn{font-size:11px;padding:3px 10px;border-radius:14px;border:0.5px solid var(--color-border-tertiary);background:transparent;color:var(--color-text-tertiary);cursor:pointer;transition:all .13s;}
+.era-btn.active,.era-btn:hover{background:var(--color-background-secondary);color:var(--color-text-primary);}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;font-size:11px;color:var(--color-text-secondary);}
+.ld{display:flex;align-items:center;gap:4px;}
+.ld-sq{width:10px;height:10px;border-radius:2px;}
+.ld-ci{width:10px;height:10px;border-radius:50%;}
+.main-layout{display:grid;grid-template-columns:1fr 280px;gap:12px;align-items:start;}
+.left-col{}
+.right-col{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);background:var(--color-background-primary);overflow:hidden;}
+.detail-header{padding:10px 12px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);}
+.detail-title{font-size:13px;font-weight:500;color:var(--color-text-primary);}
+.detail-sub{font-size:10px;color:var(--color-text-tertiary);margin-top:2px;}
+.detail-body{padding:10px 12px;}
+.detail-placeholder{font-size:12px;color:var(--color-text-tertiary);padding:20px 0;text-align:center;line-height:1.6;}
+.king-name-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:8px;}
+.king-badge-text{font-size:14px;font-weight:500;color:var(--color-text-primary);}
+.king-period{font-size:11px;color:var(--color-text-tertiary);}
+.k-pill{font-size:10px;padding:2px 8px;border-radius:10px;}
+.ach-list{list-style:none;margin-top:4px;}
+.ach-list li{font-size:11px;color:var(--color-text-secondary);padding:3px 0;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;gap:6px;line-height:1.45;}
+.ach-list li:last-child{border-bottom:none;}
+.ach-list li::before{content:'·';color:var(--color-text-tertiary);flex-shrink:0;}
+.contemp-row{margin-top:8px;padding-top:8px;border-top:0.5px solid var(--color-border-tertiary);}
+.contemp-label{font-size:10px;color:var(--color-text-tertiary);margin-bottom:4px;}
+.contemp-pills{display:flex;gap:4px;flex-wrap:wrap;}
+.ct-pill{font-size:10px;padding:2px 6px;border-radius:8px;}
+.ev-detail-type{font-size:10px;padding:2px 8px;border-radius:10px;margin-bottom:6px;display:inline-block;}
+.ev-detail-desc{font-size:11px;color:var(--color-text-secondary);line-height:1.5;}
+.ev-detail-parties{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px;}
+.tl-section{margin-bottom:4px;}
+.tl-sec-label{font-size:10px;color:var(--color-text-tertiary);padding-left:52px;margin-bottom:3px;margin-top:6px;}
+.tl-row{display:flex;align-items:center;height:46px;margin-bottom:3px;}
+.tl-klabel{width:52px;flex-shrink:0;font-size:11px;font-weight:500;color:var(--color-text-secondary);text-align:right;padding-right:8px;line-height:1.3;}
+.tl-track{flex:1;height:100%;position:relative;}
+.king-block{position:absolute;top:2px;bottom:2px;border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;border:0.5px solid transparent;transition:filter .12s,transform .1s;}
+.king-block:hover{filter:brightness(1.08);transform:scaleY(1.06);z-index:8;}
+.king-block.selected{outline:2px solid;z-index:9;}
+.kb-in{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1px 4px;width:100%;}
+.kb-nm{font-size:10px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.kb-yr{font-size:8px;opacity:.7;white-space:nowrap;}
+.ev-track-row{display:flex;align-items:center;height:32px;margin-bottom:2px;}
+.ev-track{flex:1;position:relative;height:100%;}
+.ev-dot{position:absolute;top:50%;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer;border:1.5px solid transparent;transition:transform .12s;z-index:5;}
+.ev-dot:hover{transform:translate(-50%,-50%) scale(1.6);z-index:15;}
+.ev-dot.selected{transform:translate(-50%,-50%) scale(1.4);z-index:15;}
+.ev-stem{position:absolute;top:0;bottom:0;width:1px;transform:translateX(-50%);z-index:1;}
+.ev-yr-label{position:absolute;top:1px;font-size:8px;transform:translateX(-50%);white-space:nowrap;pointer-events:none;font-weight:500;}
+.axis-row{display:flex;align-items:center;height:22px;margin-bottom:2px;}
+.axis-track{flex:1;position:relative;height:100%;background:var(--color-background-secondary);border-radius:5px;}
+.axis-tick{position:absolute;font-size:9px;color:var(--color-text-tertiary);transform:translateX(-50%);}
+.sep-line{height:0.5px;background:var(--color-border-tertiary);margin:6px 0 6px 52px;}
+.ev-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:7px;margin-top:10px;}
+.ev-card{border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;cursor:pointer;transition:background .12s;}
+.ev-card:hover{background:var(--color-background-secondary);}
+.ev-card.selected{outline:1.5px solid;}
+.ev-card-top{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
+.ev-card-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ev-card-yr{font-size:11px;font-weight:500;color:var(--color-text-primary);}
+.ev-card-type{font-size:9px;padding:1px 5px;border-radius:7px;}
+.ev-card-title{font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px;}
+.ev-card-desc{font-size:10px;color:var(--color-text-secondary);line-height:1.4;}
+.ev-card-parties{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px;}
+.ev-p-pill{font-size:9px;padding:1px 5px;border-radius:6px;}
+.ev-section-lbl{font-size:10px;font-weight:500;color:var(--color-text-tertiary);margin:10px 0 6px;letter-spacing:.04em;}
+</style>
+
+<div class="wrap">
+<h2 style="display:none">한국사 타임라인 — 삼국·남북국·후삼국</h2>
+
+<div class="tab-row" id="tab-row"></div>
+<div class="era-row" id="era-row"></div>
+
+<div class="legend" id="legend"></div>
+
+<div class="main-layout">
+  <div class="left-col" id="tl-area"></div>
+  <div class="right-col">
+    <div class="detail-header">
+      <div class="detail-title" id="dp-title">상세 정보</div>
+      <div class="detail-sub" id="dp-sub">왕 또는 사건을 클릭하세요</div>
+    </div>
+    <div class="detail-body" id="dp-body">
+      <div class="detail-placeholder">왕 블록이나<br>사건 카드를<br>클릭하면<br>업적이 표시됩니다</div>
+    </div>
+  </div>
+</div>
+
+<div id="ev-section"></div>
+</div>
+
+<script>
+const isDark = matchMedia('(prefers-color-scheme: dark)').matches;
+
+const TABS = [
+  { id:'삼국', label:'삼국시대' },
+  { id:'남북국', label:'남북국시대' },
+  { id:'후삼국', label:'후삼국시대' },
+];
+
+const ERAS = {
+  삼국: [
+    {label:'전체', s:-60, e:700},
+    {label:'건국기 BC60~100', s:-60, e:100},
+    {label:'발전기 100~400', s:100, e:400},
+    {label:'전성기 400~550', s:400, e:550},
+    {label:'통일전쟁 550~700', s:550, e:700},
+  ],
+  남북국: [
+    {label:'전체', s:676, e:936},
+    {label:'전기 676~780', s:676, e:780},
+    {label:'중기 780~889', s:780, e:889},
+    {label:'후기 889~936', s:889, e:936},
+  ],
+  후삼국: [
+    {label:'전체', s:889, e:936},
+  ],
+};
+
+const KD = {
+  고구려:   {color:'#4E7FD5', light:'#dce9fa', dark:'#0C447C'},
+  백제:     {color:'#D4713A', light:'#fae8d8', dark:'#712B13'},
+  신라:     {color:'#5B9E6A', light:'#d8f0de', dark:'#27500A'},
+  가야:     {color:'#9B7CC7', light:'#ede4f7', dark:'#3C3489'},
+  통일신라: {color:'#1D9E75', light:'#E1F5EE', dark:'#085041'},
+  발해:     {color:'#378ADD', light:'#E6F1FB', dark:'#0C447C'},
+  후고구려: {color:'#BA7517', light:'#FAEEDA', dark:'#633806'},
+  후백제:   {color:'#D85A30', light:'#FAECE7', dark:'#712B13'},
+  고려:     {color:'#888780', light:'#F1EFE8', dark:'#444441'},
+};
+
+const EV_TYPES = {
+  war:  {label:'전쟁·침공',   color:'#E24B4A', border:'#A32D2D', bg:'#FCEBEB', dbg:'#501313', dtx:'#F7C1C1'},
+  ally: {label:'동맹·외교',   color:'#BA7517', border:'#633806', bg:'#FAEEDA', dbg:'#412402', dtx:'#FAC775'},
+  cult: {label:'문화·제도',   color:'#185FA5', border:'#042C53', bg:'#E6F1FB', dbg:'#042C53', dtx:'#B5D4F4'},
+  annex:{label:'병합·멸망',   color:'#3B6D11', border:'#173404', bg:'#EAF3DE', dbg:'#173404', dtx:'#C0DD97'},
+  reform:{label:'개혁·반란',  color:'#7F77DD', border:'#3C3489', bg:'#EEEDFE', dbg:'#26215C', dtx:'#CECBF6'},
+};
+
+const KINGS_삼국 = [
+  {k:'고구려',name:'동명성왕',s:-37,e:-19,ach:['고구려 건국(BC 37)','졸본 도읍','부족 통합']},
+  {k:'고구려',name:'유리왕',s:-19,e:18,ach:['국내성 천도','황조가']},
+  {k:'고구려',name:'대무신왕',s:18,e:44,ach:['낙랑 공격']},
+  {k:'고구려',name:'태조왕',s:53,e:146,ach:['옥저·동예 복속','연나부 세습']},
+  {k:'고구려',name:'고국천왕',s:179,e:197,ach:['진대법(을파소)','5부 개편']},
+  {k:'고구려',name:'동천왕',s:227,e:248,ach:['위 관구검 침략']},
+  {k:'고구려',name:'미천왕',s:300,e:331,ach:['낙랑군 축출(313)','대방군 축출(314)']},
+  {k:'고구려',name:'고국원왕',s:331,e:371,ach:['전연 모용황 침략','근초고왕에 전사(371)']},
+  {k:'고구려',name:'소수림왕',s:371,e:384,ach:['불교 수용(372)','태학 설립','율령 반포(373)']},
+  {k:'고구려',name:'광개토대왕',s:391,e:413,ach:['영토 최대 확장','신라 구원(400)','연호 영락','광개토왕릉비']},
+  {k:'고구려',name:'장수왕',s:413,e:491,ach:['평양 천도(427)','한강 이남 진출(475)','개로왕 전사']},
+  {k:'고구려',name:'문자명왕',s:491,e:519,ach:['부여 병합']},
+  {k:'고구려',name:'영양왕',s:590,e:618,ach:['살수대첩(612) 을지문덕','<신집> 편찬']},
+  {k:'고구려',name:'영류왕',s:618,e:642,ach:['천리장성 축조','연개소문에 피살']},
+  {k:'고구려',name:'보장왕',s:642,e:668,ach:['안시성(645) 당 격퇴','연개소문 집권','나당 연합에 멸망(668)']},
+  {k:'백제',name:'온조왕',s:-18,e:28,ach:['백제 건국(BC 18)','위례성 도읍']},
+  {k:'백제',name:'고이왕',s:234,e:286,ach:['관등제·공복제','율령 정비']},
+  {k:'백제',name:'근초고왕',s:346,e:375,ach:['마한 병합','고국원왕 전사(371)','칠지도·<서기>']},
+  {k:'백제',name:'침류왕',s:384,e:385,ach:['불교 수용(384)']},
+  {k:'백제',name:'비유왕',s:427,e:455,ach:['나제 동맹(433)']},
+  {k:'백제',name:'개로왕',s:455,e:475,ach:['한성 함락 전사(475)']},
+  {k:'백제',name:'문주왕',s:475,e:477,ach:['웅진 천도(475)']},
+  {k:'백제',name:'무령왕',s:501,e:523,ach:['22담로 지방통제','무령왕릉','남조 교류']},
+  {k:'백제',name:'성왕',s:523,e:554,ach:['사비 천도(538)','불교 일본 전파','22부 관제','관산성 전사(554)']},
+  {k:'백제',name:'무왕',s:600,e:641,ach:['미륵사 창건','서동요 설화']},
+  {k:'백제',name:'의자왕',s:641,e:660,ach:['대야성 함락(642)','계백 황산벌','나당 연합에 멸망(660)']},
+  {k:'신라',name:'박혁거세',s:-57,e:4,ach:['신라 건국(BC 57)','금성 도읍']},
+  {k:'신라',name:'내물 마립간',s:356,e:402,ach:['마립간 칭호·김씨 세습','고구려로 왜 격퇴']},
+  {k:'신라',name:'눌지 마립간',s:417,e:458,ach:['나제 동맹(433)','박제상 설화']},
+  {k:'신라',name:'지증왕',s:500,e:514,ach:['국호 신라 확정','우산국 복속(512)','순장 금지']},
+  {k:'신라',name:'법흥왕',s:514,e:540,ach:['율령 반포','불교 공인(527·이차돈)','금관가야 병합(532)','연호 건원']},
+  {k:'신라',name:'진흥왕',s:540,e:576,ach:['한강 전역 차지(553)','대가야 멸망(562)','화랑도 조직화','순수비 건립']},
+  {k:'신라',name:'진평왕',s:579,e:632,ach:['원광 세속오계','수·당 외교']},
+  {k:'신라',name:'선덕여왕',s:632,e:647,ach:['첫 여왕','황룡사 9층탑','첨성대','분황사']},
+  {k:'신라',name:'진덕여왕',s:647,e:654,ach:['나당 동맹 강화','당 의복·연호 사용']},
+  {k:'신라',name:'무열왕',s:654,e:661,ach:['최초 진골 왕','나당 동맹','백제 멸망(660)']},
+  {k:'신라',name:'문무왕',s:661,e:681,ach:['고구려 멸망(668)','나당전쟁 승리(676)','삼국통일','대왕암']},
+  {k:'가야',name:'수로왕',s:42,e:199,ach:['금관가야 건국(42)','허황옥 설화','철 생산·중계무역']},
+  {k:'가야',name:'가야 연맹',s:42,e:562,ach:['전기(금관가야)·후기(대가야) 연맹','철 수출','금관가야(532)·대가야(562) 멸망']},
+];
+
+const KINGS_남북국 = [
+  {k:'통일신라',name:'신문왕',s:681,e:692,ach:['9서당·10정 정비','국학 설립','5소경 완비','김흠돌 난 진압','왕권 강화']},
+  {k:'통일신라',name:'효소왕',s:692,e:702,ach:['관료전 지급','공장부·채전 설치']},
+  {k:'통일신라',name:'성덕왕',s:702,e:737,ach:['정전 지급','당과 우호 관계','발해 견제']},
+  {k:'통일신라',name:'경덕왕',s:742,e:765,ach:['한화 정책(지명·관명 한자화)','불국사·석굴암 창건','녹읍 부활 — 귀족 강화']},
+  {k:'통일신라',name:'혜공왕',s:765,e:780,ach:['96각간의 난(768)','왕위 쟁탈 시작','하대 시작']},
+  {k:'통일신라',name:'원성왕',s:785,e:798,ach:['독서삼품과 실시','김씨 원성왕계 확립']},
+  {k:'통일신라',name:'헌덕왕',s:809,e:826,ach:['김헌창의 난(822)','장보고 청해진 설치 건의']},
+  {k:'통일신라',name:'흥덕왕',s:826,e:836,ach:['청해진 설치(828) — 장보고','사치 금지령','한일 무역 장악']},
+  {k:'통일신라',name:'신무왕',s:839,e:839,ach:['장보고 지원으로 즉위','단명']},
+  {k:'통일신라',name:'문성왕',s:839,e:857,ach:['장보고 암살(846)','귀족 반란 지속']},
+  {k:'통일신라',name:'진성여왕',s:887,e:897,ach:['원종·애노의 난(889)','최치원 시무 10조 건의(894)','각지 호족 독립','견훤·궁예 등장']},
+  {k:'통일신라',name:'효공왕',s:897,e:912,ach:['후백제(900)·후고구려(901) 건국 방관','신라 통제력 상실']},
+  {k:'통일신라',name:'경순왕',s:927,e:935,ach:['고려 왕건에 자진 항복(935)','신라 멸망','마지막 왕']},
+  {k:'발해',name:'고왕(대조영)',s:698,e:719,ach:['발해 건국(698)','동모산 도읍','고구려 유민·말갈 통합','고구려 계승 의식']},
+  {k:'발해',name:'무왕(대무예)',s:719,e:737,ach:['영토 확장','흑수말갈 정벌','당 등주 공격(732)','연호 인안']},
+  {k:'발해',name:'문왕(대흠무)',s:737,e:793,ach:['3성 6부 정비','상경 천도(756)','당과 외교 재개','해동성국 기반','연호 대흥']},
+  {k:'발해',name:'선왕(대인수)',s:818,e:830,ach:['영토 최대 확장 — 해동성국','5경 15부 62주 완비','말갈 대부분 복속']},
+  {k:'발해',name:'애왕(대인선)',s:906,e:926,ach:['거란 야율아보기에 멸망(926)','발해 228년 만에 소멸']},
+];
+
+const KINGS_후삼국 = [
+  {k:'후백제',name:'견훤',s:900,e:935,ach:['후백제 건국(900)','완산주(전주) 도읍','신라 경애왕 살해(927)','경주 약탈','아들 신검에 유폐 → 왕건에 투항']},
+  {k:'후고구려',name:'궁예',s:901,e:918,ach:['후고구려 건국(901)','철원 천도','국호 마진→태봉 변경','관심법 폭정','왕건에게 축출(918)']},
+  {k:'고려',name:'왕건(태조)',s:918,e:943,ach:['고려 건국(918)','민족 통합 정책','후백제 멸망(936)','신라 귀순(935)','훈요10조·기인제도·사심관제','북진 정책·서경 중시']},
+];
+
+const EVENTS_삼국 = [
+  {id:'s1',year:313,type:'annex',title:'낙랑·대방군 축출',parties:['고구려'],desc:'미천왕이 낙랑군(313)·대방군(314) 축출. 한사군 완전 소멸, 고구려 한반도 북부 장악.'},
+  {id:'s2',year:371,type:'war',title:'고국원왕 전사',parties:['고구려','백제'],desc:'근초고왕 평양성 공격, 고국원왕 전사. 백제 전성기 절정.'},
+  {id:'s3',year:372,type:'cult',title:'고구려 불교·태학·율령',parties:['고구려'],desc:'소수림왕 — 불교 수용(372), 태학 설립(372), 율령 반포(373). 고대국가 체제 완성.'},
+  {id:'s4',year:384,type:'cult',title:'백제 불교 수용',parties:['백제'],desc:'침류왕 — 동진 마라난타 불교 전래(384).'},
+  {id:'s5',year:400,type:'war',title:'광개토대왕 신라 구원',parties:['고구려','신라','가야'],desc:'고구려 5만 남하, 왜·가야 연합군 격퇴. 금관가야 쇠퇴 시작.'},
+  {id:'s6',year:433,type:'ally',title:'나·제 동맹',parties:['백제','신라'],desc:'비유왕·눌지 마립간 동맹. 고구려 남진 공동 대응.'},
+  {id:'s7',year:475,type:'war',title:'한성 함락·개로왕 전사',parties:['고구려','백제'],desc:'장수왕 한성 함락, 개로왕 전사. 백제 웅진 천도.'},
+  {id:'s8',year:527,type:'cult',title:'신라 불교 공인',parties:['신라'],desc:'법흥왕 — 이차돈 순교(527), 불교 공인. 삼국 중 가장 늦음.'},
+  {id:'s9',year:532,type:'annex',title:'금관가야 멸망',parties:['신라','가야'],desc:'법흥왕이 금관가야 병합(532). 전기 가야 연맹 소멸.'},
+  {id:'s10',year:553,type:'war',title:'신라 한강 독점',parties:['신라','백제'],desc:'진흥왕이 백제 점령지 한강 하류 기습 탈취. 나제 동맹 붕괴.'},
+  {id:'s11',year:554,type:'war',title:'관산성 전투',parties:['백제','신라'],desc:'성왕 관산성 전투 전사(554). 백제 3만 궤멸. 나제 동맹 완전 파탄.'},
+  {id:'s12',year:562,type:'annex',title:'대가야 멸망',parties:['신라','가야'],desc:'진흥왕 — 이사부·사다함이 대가야 정복(562). 가야 완전 멸망.'},
+  {id:'s13',year:612,type:'war',title:'살수대첩',parties:['고구려'],desc:'을지문덕 — 수 양제 113만 대군 격퇴. 수의 멸망 원인.'},
+  {id:'s14',year:645,type:'war',title:'안시성 싸움',parties:['고구려'],desc:'당 태종 대군 침공 → 안시성 결사 항전으로 격퇴(645).'},
+  {id:'s15',year:660,type:'annex',title:'백제 멸망',parties:['신라','백제'],desc:'나당 연합군 — 계백 황산벌, 백제 멸망(660).'},
+  {id:'s16',year:668,type:'annex',title:'고구려 멸망',parties:['고구려','신라'],desc:'나당 연합군 평양성 함락(668). 고구려 멸망.'},
+  {id:'s17',year:676,type:'war',title:'나·당 전쟁 승리',parties:['신라'],desc:'매소성(675)·기벌포(676) 승리. 당군 축출, 삼국통일 완성.'},
+];
+
+const EVENTS_남북국 = [
+  {id:'n1',year:698,type:'cult',title:'발해 건국',parties:['발해'],desc:'대조영이 동모산에 발해 건국(698). 고구려 유민+말갈 연합. 고구려 계승 표방.'},
+  {id:'n2',year:722,type:'cult',title:'성덕왕 정전 지급',parties:['통일신라'],desc:'성덕왕 — 백성에게 정전 지급(722). 토지 제도 정비.'},
+  {id:'n3',year:732,type:'war',title:'발해 당 등주 공격',parties:['발해'],desc:'무왕 — 장문휴가 당 등주 수군 공격. 발해·당 일시 충돌.'},
+  {id:'n4',year:756,type:'cult',title:'발해 상경 천도',parties:['발해'],desc:'문왕 — 상경 용천부 천도(756). 3성 6부 완비, 해동성국 기반.'},
+  {id:'n5',year:768,type:'reform',title:'96각간의 난',parties:['통일신라'],desc:'혜공왕 — 96각간의 난(768). 하대 귀족 왕위 쟁탈전 본격화.'},
+  {id:'n6',year:822,type:'reform',title:'김헌창의 난',parties:['통일신라'],desc:'헌덕왕 — 김헌창이 웅주에서 반란, 국호 장안. 지방 분열 심화.'},
+  {id:'n7',year:828,type:'cult',title:'청해진 설치',parties:['통일신라'],desc:'흥덕왕 — 장보고가 청해진 설치(828). 해적 소탕, 동아시아 해상 무역 장악.'},
+  {id:'n8',year:889,type:'reform',title:'원종·애노의 난',parties:['통일신라'],desc:'진성여왕 — 원종·애노의 난(889). 전국 농민 봉기 시작. 견훤·궁예 세력 성장.'},
+  {id:'n9',year:894,type:'reform',title:'최치원 시무 10조',parties:['통일신라'],desc:'최치원이 진성여왕에게 시무 10조 건의(894). 개혁 요청이나 수용 안 됨.'},
+  {id:'n10',year:926,type:'annex',title:'발해 멸망',parties:['발해'],desc:'거란 야율아보기가 발해 침공, 228년 만에 멸망(926). 유민 고려 망명.'},
+];
+
+const EVENTS_후삼국 = [
+  {id:'h1',year:900,type:'cult',title:'후백제 건국',parties:['후백제'],desc:'견훤이 완산주(전주)에 후백제 건국(900).'},
+  {id:'h2',year:901,type:'cult',title:'후고구려 건국',parties:['후고구려'],desc:'궁예가 후고구려 건국(901). 이후 마진→태봉으로 국호 변경.'},
+  {id:'h3',year:918,type:'reform',title:'고려 건국·궁예 축출',parties:['고려','후고구려'],desc:'왕건이 궁예를 몰아내고 고려 건국(918). 철원에서 송악(개경)으로 천도.'},
+  {id:'h4',year:927,type:'war',title:'견훤 경주 약탈',parties:['후백제','통일신라'],desc:'견훤이 신라 경주 침입, 경애왕 자살 강요. 경순왕 옹립. 고창(안동) 전투(930) 왕건 승리.'},
+  {id:'h5',year:935,type:'annex',title:'신라 고려에 귀순',parties:['통일신라','고려'],desc:'경순왕이 왕건에게 자진 항복(935). 신라 992년 만에 멸망.'},
+  {id:'h6',year:935,type:'reform',title:'견훤 왕건에 투항',parties:['후백제','고려'],desc:'아들 신검에 유폐된 견훤이 탈출, 왕건에 투항.'},
+  {id:'h7',year:936,type:'annex',title:'후백제 멸망·삼국통일',parties:['고려','후백제'],desc:'왕건이 일리천 전투에서 신검 격파. 후백제 멸망(936). 고려 후삼국 통일 완성.'},
+];
+
+const DATA = {
+  삼국:  {kings: KINGS_삼국,  events: EVENTS_삼국,  rows:['고구려','백제','신라','가야']},
+  남북국:{kings: KINGS_남북국, events: EVENTS_남북국, rows:['통일신라','발해']},
+  후삼국:{kings: KINGS_후삼국, events: EVENTS_후삼국, rows:['통일신라','후백제','후고구려','고려']},
+};
+
+let curTab = '삼국';
+let curEraIdx = 0;
+let selectedId = null;
+
+function fmtY(y){return y<0?`BC${Math.abs(y)}`:`${y}`;}
+function pct(y,s,e){return Math.max(0,Math.min(100,(y-s)/(e-s)*100));}
+
+function buildTabs(){
+  const el=document.getElementById('tab-row');
+  el.innerHTML='';
+  TABS.forEach(t=>{
+    const b=document.createElement('button');
+    b.className='tab-btn'+(t.id===curTab?' active':'');
+    b.textContent=t.label;
+    b.onclick=()=>{curTab=t.id;curEraIdx=0;selectedId=null;render();};
+    el.appendChild(b);
+  });
+}
+
+function buildEras(){
+  const el=document.getElementById('era-row');
+  el.innerHTML='';
+  const eras=ERAS[curTab];
+  eras.forEach((era,i)=>{
+    const b=document.createElement('button');
+    b.className='era-btn'+(i===curEraIdx?' active':'');
+    b.textContent=era.label;
+    b.onclick=()=>{curEraIdx=i;selectedId=null;render();};
+    el.appendChild(b);
+  });
+}
+
+function buildLegend(){
+  const el=document.getElementById('legend');
+  el.innerHTML='';
+  const rows=DATA[curTab].rows;
+  rows.forEach(k=>{
+    const kd=KD[k];
+    const d=document.createElement('div');
+    d.className='ld';
+    d.innerHTML=`<div class="ld-sq" style="background:${kd.color}"></div><span>${k}</span>`;
+    el.appendChild(d);
+  });
+  Object.entries(EV_TYPES).forEach(([,et])=>{
+    const d=document.createElement('div');
+    d.className='ld';
+    d.innerHTML=`<div class="ld-ci" style="background:${et.color};border:1.5px solid ${et.border}"></div><span>${et.label}</span>`;
+    el.appendChild(d);
+  });
+}
+
+function buildTimeline(){
+  const area=document.getElementById('tl-area');
+  area.innerHTML='';
+  const era=ERAS[curTab][curEraIdx];
+  const {s:S,e:E}=era;
+  const {kings,events,rows}=DATA[curTab];
+
+  const axis=document.createElement('div');
+  axis.className='axis-row';
+  const klbl=document.createElement('div');
+  klbl.style.cssText='width:52px;flex-shrink:0;';
+  const atrack=document.createElement('div');
+  atrack.className='axis-track';
+  for(let i=0;i<=6;i++){
+    const yr=Math.round(S+(E-S)*i/6);
+    const tk=document.createElement('span');
+    tk.className='axis-tick';
+    tk.style.left=`${i/6*100}%`;
+    tk.textContent=fmtY(yr);
+    atrack.appendChild(tk);
+  }
+  axis.appendChild(klbl);axis.appendChild(atrack);
+  area.appendChild(axis);
+
+  const evLbl=document.createElement('div');
+  evLbl.className='tl-sec-label';
+  evLbl.textContent='국가 간 주요 사건';
+  area.appendChild(evLbl);
+
+  const evRow=document.createElement('div');
+  evRow.className='ev-track-row';
+  const ePlaceholder=document.createElement('div');
+  ePlaceholder.style.cssText='width:52px;flex-shrink:0;';
+  const eTrack=document.createElement('div');
+  eTrack.className='ev-track';
+
+  const visEvs=events.filter(ev=>ev.year>=S&&ev.year<=E);
+  visEvs.forEach(ev=>{
+    const lp=pct(ev.year,S,E);
+    const et=EV_TYPES[ev.type];
+    const stem=document.createElement('div');
+    stem.className='ev-stem';
+    stem.style.cssText=`left:${lp}%;background:${et.color}44;`;
+    eTrack.appendChild(stem);
+    const lbl=document.createElement('div');
+    lbl.className='ev-yr-label';
+    lbl.style.cssText=`left:${lp}%;color:${et.color};`;
+    lbl.textContent=fmtY(ev.year);
+    eTrack.appendChild(lbl);
+    const dot=document.createElement('div');
+    dot.className='ev-dot'+(selectedId===ev.id?' selected':'');
+    dot.style.cssText=`left:${lp}%;background:${et.color};border-color:${et.border};`;
+    dot.title=ev.title;
+    dot.onclick=()=>{selectEvent(ev);};
+    eTrack.appendChild(dot);
+  });
+
+  evRow.appendChild(ePlaceholder);evRow.appendChild(eTrack);
+  area.appendChild(evRow);
+
+  const sep=document.createElement('div');
+  sep.className='sep-line';
+  area.appendChild(sep);
+
+  const kLbl=document.createElement('div');
+  kLbl.className='tl-sec-label';
+  kLbl.textContent='왕 재위 기간';
+  area.appendChild(kLbl);
+
+  rows.forEach(kname=>{
+    const row=document.createElement('div');
+    row.className='tl-row';
+    const lbl=document.createElement('div');
+    lbl.className='tl-klabel';
+    lbl.textContent=kname;
+    const track=document.createElement('div');
+    track.className='tl-track';
+
+    kings.filter(k=>k.k===kname).forEach(king=>{
+      if(king.e<S||king.s>E)return;
+      const ls=Math.max(king.s,S),le=Math.min(king.e,E);
+      const left=pct(ls,S,E),width=pct(le,S,E)-left;
+      if(width<0.1)return;
+      const kd=KD[kname];
+      const block=document.createElement('div');
+      const sid=`king-${kname}-${king.name}`;
+      block.className='king-block'+(selectedId===sid?' selected':'');
+      if(selectedId===sid) block.style.outlineColor=kd.color;
+      block.style.cssText+=`left:${left}%;width:${width}%;background:${isDark?kd.color+'30':kd.light};border-color:${kd.color}55;`;
+      const inner=document.createElement('div');
+      inner.className='kb-in';
+      const nm=document.createElement('div');
+      nm.className='kb-nm';
+      nm.style.color=isDark?kd.light:kd.dark;
+      nm.textContent=king.name;
+      inner.appendChild(nm);
+      if(width>3.5){
+        const yr=document.createElement('div');
+        yr.className='kb-yr';
+        yr.style.color=isDark?kd.light:kd.dark;
+        yr.textContent=`${fmtY(king.s)}~${fmtY(king.e)}`;
+        inner.appendChild(yr);
+      }
+      block.appendChild(inner);
+      block.onclick=()=>selectKing(king,kname,sid);
+      track.appendChild(block);
+    });
+
+    row.appendChild(lbl);row.appendChild(track);
+    area.appendChild(row);
+  });
+}
+
+function buildEventCards(){
+  const sec=document.getElementById('ev-section');
+  sec.innerHTML='';
+  const era=ERAS[curTab][curEraIdx];
+  const {events}=DATA[curTab];
+  const visEvs=events.filter(ev=>ev.year>=era.s&&ev.year<=era.e).sort((a,b)=>a.year-b.year);
+  if(!visEvs.length)return;
+
+  const lbl=document.createElement('div');
+  lbl.className='ev-section-lbl';
+  lbl.textContent='국가 간 주요 사건';
+  sec.appendChild(lbl);
+
+  const grid=document.createElement('div');
+  grid.className='ev-cards-grid';
+
+  visEvs.forEach(ev=>{
+    const et=EV_TYPES[ev.type];
+    const card=document.createElement('div');
+    card.className='ev-card'+(selectedId===ev.id?' selected':'');
+    card.id='evc-'+ev.id;
+    if(selectedId===ev.id) card.style.outlineColor=et.color;
+    const top=document.createElement('div');
+    top.className='ev-card-top';
+    const dot=document.createElement('div');dot.className='ev-card-dot';dot.style.background=et.color;
+    const yr=document.createElement('span');yr.className='ev-card-yr';yr.textContent=fmtY(ev.year);
+    const tp=document.createElement('span');tp.className='ev-card-type';
+    tp.style.cssText=`background:${isDark?et.dbg:et.bg};color:${isDark?et.dtx:et.border};`;
+    tp.textContent=et.label;
+    top.appendChild(dot);top.appendChild(yr);top.appendChild(tp);
+    const title=document.createElement('div');title.className='ev-card-title';title.textContent=ev.title;
+    const desc=document.createElement('div');desc.className='ev-card-desc';desc.textContent=ev.desc;
+    const parties=document.createElement('div');parties.className='ev-card-parties';
+    ev.parties.forEach(p=>{
+      const kd=KD[p];if(!kd)return;
+      const pill=document.createElement('span');pill.className='ev-p-pill';
+      pill.style.cssText=`background:${isDark?kd.color+'33':kd.light};color:${isDark?kd.light:kd.dark};`;
+      pill.textContent=p;parties.appendChild(pill);
+    });
+    card.appendChild(top);card.appendChild(title);card.appendChild(desc);card.appendChild(parties);
+    card.onclick=()=>selectEvent(ev);
+    grid.appendChild(card);
+  });
+  sec.appendChild(grid);
+}
+
+function selectKing(king,kname,sid){
+  selectedId=sid;
+  const kd=KD[kname];
+  const pillStyle=`background:${isDark?kd.color+'33':kd.light};color:${isDark?kd.light:kd.dark};`;
+  document.getElementById('dp-title').textContent=king.name;
+  document.getElementById('dp-sub').textContent=`${kname} · ${fmtY(king.s)} ~ ${fmtY(king.e)}`;
+
+  const contemps=DATA[curTab].kings.filter(k=>k.k!==kname&&k.s<king.e&&k.e>king.s)
+    .reduce((acc,k)=>{if(!acc.find(x=>x.k===k.k))acc.push(k);return acc;},[]);
+
+  document.getElementById('dp-body').innerHTML=`
+    <div class="king-name-badge">
+      <span class="k-pill" style="${pillStyle}">${kname}</span>
+      <span class="king-period">${fmtY(king.s)} ~ ${fmtY(king.e)}</span>
+    </div>
+    <ul class="ach-list">${king.ach.map(a=>`<li>${a}</li>`).join('')}</ul>
+    ${contemps.length?`<div class="contemp-row"><div class="contemp-label">동시대 왕</div><div class="contemp-pills">${contemps.slice(0,5).map(c=>{const cc=KD[c.k];return`<span class="ct-pill" style="background:${isDark?cc.color+'33':cc.light};color:${isDark?cc.light:cc.dark};">${c.k}·${c.name}</span>`;}).join('')}</div></div>`:''}
+  `;
+  rebuildSelected();
+}
+
+function selectEvent(ev){
+  selectedId=ev.id;
+  const et=EV_TYPES[ev.type];
+  const relKings=DATA[curTab].kings.filter(k=>ev.parties.includes(k.k)&&k.s<=ev.year&&k.e>=ev.year);
+  document.getElementById('dp-title').textContent=ev.title;
+  document.getElementById('dp-sub').textContent=`${fmtY(ev.year)} · ${et.label}`;
+  document.getElementById('dp-body').innerHTML=`
+    <span class="ev-detail-type" style="background:${isDark?et.dbg:et.bg};color:${isDark?et.dtx:et.border};">${et.label}</span>
+    <div class="ev-detail-desc">${ev.desc}</div>
+    ${relKings.length?`<div class="contemp-row"><div class="contemp-label">당시 재위 왕</div><div class="ev-detail-parties">${relKings.map(k=>{const kd=KD[k.k];return`<span class="ct-pill" style="background:${isDark?kd.color+'33':kd.light};color:${isDark?kd.light:kd.dark};">${k.k}·${k.name}</span>`;}).join('')}</div></div>`:''}
+  `;
+  rebuildSelected();
+  const card=document.getElementById('evc-'+ev.id);
+  if(card)card.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function rebuildSelected(){
+  buildTimeline();
+  buildEventCards();
+}
+
+function render(){
+  buildTabs();
+  buildEras();
+  buildLegend();
+  buildTimeline();
+  buildEventCards();
+  document.getElementById('dp-title').textContent='상세 정보';
+  document.getElementById('dp-sub').textContent='왕 또는 사건을 클릭하세요';
+  document.getElementById('dp-body').innerHTML='<div class="detail-placeholder">왕 블록이나<br>사건 카드를<br>클릭하면<br>업적이 표시됩니다</div>';
+}
+
+render();
+</script>
